@@ -2,7 +2,11 @@
 import { useState, useEffect } from 'react';
 import { getAllJobs, Job, Operator } from '../utils/connector';
 import AgGridTable from '../components/Functions/AgGridTable/AgGridTable';
-// import moment from 'moment';
+import styles from './page.module.scss';
+
+import { Typography, Paper, Stack, Divider } from '@mui/material';
+
+
 
 export default function Page() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -21,12 +25,21 @@ export default function Page() {
     localStorage.setItem('checkInStatus', JSON.stringify(newStatus));
   };
 
+  const formatDateTime = (isoString: string) => {
+    return new Date(isoString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   return (
-    <div>
+    <div className={styles.pageContainer}>
       <h1>Job Listings</h1>
 
       {jobs.map((job) => {
-        // Ag-Grid columns for Operators
         const columnDefs = [
           { headerName: 'Full Name', field: 'fullName', flex: 1 },
           { headerName: 'Ops Completed', field: 'opsCompleted', flex: 1 },
@@ -41,14 +54,8 @@ export default function Page() {
               const checkedIn = checkInStatus[id] || false;
               return (
                 <button
+                  className={`${styles.checkInButton} ${checkedIn ? 'checkedIn' : 'checkedOut'}`}
                   onClick={() => handleCheckInOut(id)}
-                  style={{
-                    backgroundColor: checkedIn ? 'green' : 'white',
-                    color: checkedIn ? 'white' : 'black',
-                    border: '1px solid gray',
-                    padding: '0.25rem 0.5rem',
-                    cursor: 'pointer',
-                  }}
                 >
                   {checkedIn ? 'Check Out' : 'Check In'}
                 </button>
@@ -57,7 +64,6 @@ export default function Page() {
           },
         ];
 
-        // Map Operators to rows
         const rowData = job.operators.map((op: Operator) => ({
           id: op.id,
           fullName: `${op.firstName} ${op.lastName}`,
@@ -65,36 +71,25 @@ export default function Page() {
           reliability: (op.reliability * 100).toFixed(0),
           endorsements: op.endorsements.join(', '),
         }));
+        
 
         return (
-          <div
-            key={job.opId}
-            style={{
-              border: '1px solid #ccc',
-              margin: '1rem',
-              padding: '1rem',
-              borderRadius: '8px',
-            }}
-          >
-            <h2>{job.opTitle}</h2>
-            <p>
-              <strong>Public ID:</strong> {job.publicId}
-            </p>
-            <p>
-              <strong>Operators Needed:</strong> {job.filledQuantity}/{job.operatorsNeeded}
-            </p>
-            <p>
-              {/* <strong>Time:</strong> {moment(job.startTime).format('YYYY-MM-DD HH:mm')} –{' '}
-              {moment(job.endTime).format('YYYY-MM-DD HH:mm')} */}
-            </p>
-
+          <Paper key={job.opId} sx={{ p: 2, mb: 2 }} className={styles.jobContainer}>
+            <Stack spacing={2}>
+              <Typography variant="h3">{job.opTitle}</Typography>
+              <Typography variant="body1"><strong>Public ID:</strong> {job.publicId}</Typography>
+              <Typography variant="body1"><strong>Operators Needed:</strong> {job.operatorsNeeded}</Typography>
+              <Typography variant="body2"><strong>Start Time:</strong> {formatDateTime(job.startTime)}</Typography>
+              <Typography variant="body2"><strong>End Time:</strong> {formatDateTime(job.endTime)}</Typography>
+              <Divider />
+            </Stack>
             <AgGridTable
               rowData={rowData}
               columnDefs={columnDefs}
-              defaultColDef={{ sortable: true, filter: true, resizable: true }}
+              defaultColDef={{ sortable: true, resizable: true }}
               suppressHorizontalScroll={true}
             />
-          </div>
+          </Paper>
         );
       })}
     </div>

@@ -1,0 +1,59 @@
+// src/app/page.module.scss
+
+.pageContainer {
+  padding: 2rem;
+  background-color: #FFFDF8;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.jobContainer {
+  border: 1px solid #ccc;
+  margin: 1rem 0;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: #FDF4E3;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.jobTitle {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3361AE;
+  margin-bottom: 0.5rem;
+}
+
+.jobInfo {
+  margin: 0.25rem 0;
+  font-size: 16px;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.checkInButton {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid gray;
+  cursor: pointer;
+  font-weight: bold;
+
+  &.checkedIn {
+    background-color: green;
+    color: white;
+  }
+
+  &.checkedOut {
+    background-color: white;
+    color: black;
+  }
+}
+
+.agGridWrapper {
+  margin-top: 1rem;
+
+  .ag-theme-alpine {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
