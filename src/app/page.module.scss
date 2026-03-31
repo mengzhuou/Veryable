@@ -4,19 +4,24 @@
   padding: 2rem;
   background-color: #FFFDF8;
   font-family: 'Montserrat', sans-serif;
+  overflow-y: auto;
+  height: 100vh;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .jobContainer {
   border: 1px solid #ccc;
   margin: 1rem 0;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 2rem;
   background-color: #FDF4E3;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.5rem 0.875rem rgba(0, 0, 0, 0.05);
 }
 
 .jobTitle {
-  font-size: 24px;
+  font-size: 2rem;
   font-weight: bold;
   color: #3361AE;
   margin-bottom: 0.5rem;
@@ -24,7 +29,7 @@
 
 .jobInfo {
   margin: 0.25rem 0;
-  font-size: 16px;
+  font-size: 1rem;
 
   strong {
     font-weight: 600;
@@ -33,7 +38,7 @@
 
 .checkInButton {
   padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  border-radius: 0.5rem;
   border: 1px solid gray;
   cursor: pointer;
   font-weight: bold;
@@ -53,7 +58,13 @@
   margin-top: 1rem;
 
   .ag-theme-alpine {
-    border-radius: 8px;
+    border-radius: 0.5rem;
     overflow: hidden;
   }
+}
+
+.loadingIcon {
+  margin-top: 3rem;
+  width: 7rem;
+  height: 7rem;
 }

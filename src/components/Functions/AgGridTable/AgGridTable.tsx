@@ -26,6 +26,7 @@ const AgGridTable: React.FC<AgGridTableProps> = ({
   <div className={styles.agBody}>
     <div className={`${styles.pageContainer} ag-theme-alpine`} style={{ width: '100%' }}>
       <AgGridReact
+        theme="legacy"
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
