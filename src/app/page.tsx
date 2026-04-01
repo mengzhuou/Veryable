@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { getAllJobs, Job, Operator } from '../utils/connector';
-import { Typography, Paper, Stack, Divider, CircularProgress } from '@mui/material';
+import { Typography, Paper, Stack, Divider, CircularProgress, Autocomplete, TextField } from '@mui/material';
 import { formatDateTime } from '../utils/pageUtils';
 import { OPERATOR_COLUMNS, JOB_LABELS } from '../constants/constants';
 import AgGridTable from '../components/Functions/AgGridTable/AgGridTable';
@@ -9,11 +9,37 @@ import styles from './page.module.scss';
 
 export default function Page() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [checkInStatus, setCheckInStatus] = useState<{ [key: number]: boolean }>({});
   const [loading, setLoading] = useState(true);
+  const [checkInStatus, setCheckInStatus] = useState<{ [key: number]: boolean }>({});
+  const [searchValue, setSearchValue] = useState<any>(null);
+  const [inputValue, setInputValue] = useState<string>(''); 
+  
+  // demo
   // const [errorMessage, setErrorMessage] = useState("Failed to load job data. Please try again.");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const searchOptions = jobs.flatMap((job) => {
+    const operatorOptions = job.operators.map((op) => ({
+      type: 'operator',
+      label: `${op.firstName} ${op.lastName}`,
+      jobId: job.opId,
+    }));
+
+    return [
+      {
+        type: 'job',
+        label: job.opTitle,
+        jobId: job.opId,
+      },
+      {
+        type: 'publicId',
+        label: job.publicId,
+        jobId: job.opId,
+      },
+      ...operatorOptions,
+    ];
+  });
+  
   useEffect(() => {
     const stored = localStorage.getItem('checkInStatus');
     // if (stored) setCheckInStatus(JSON.parse(stored));
@@ -42,6 +68,67 @@ export default function Page() {
     localStorage.setItem('checkInStatus', JSON.stringify(newStatus));
   };
 
+  const fetchAutoCompleteOptions = (event: any, value: string) => {
+    setInputValue(value);
+    if (!value) setSearchValue(null)
+  };
+
+  const filteredJobs = jobs
+    .map((job) => {
+    // user typing input value
+    if (inputValue) {
+      const search = inputValue.toLowerCase();
+
+      // match job title or publicId → return full job
+      if (
+        job.opTitle.toLowerCase().includes(search) ||
+        job.publicId.toLowerCase().includes(search)
+      ) {
+        return job;
+      }
+
+      // match operators → filter inside job
+      const filteredOperators = job.operators.filter((op) =>
+        `${op.firstName} ${op.lastName}`
+          .toLowerCase()
+          .includes(search)
+      );
+
+      if (filteredOperators.length > 0) {
+        return { ...job, operators: filteredOperators };
+      }
+
+      return null;
+    }
+
+    // selected option
+    if (searchValue) {
+      if (
+        searchValue.type === 'job' ||
+        searchValue.type === 'publicId'
+      ) {
+        return job.opId === searchValue.jobId ? job : null;
+      }
+
+      if (searchValue.type === 'operator') {
+        const filteredOperators = job.operators.filter(
+          (op) =>
+            `${op.firstName} ${op.lastName}` === searchValue.label
+        );
+
+        if (filteredOperators.length > 0) {
+          return { ...job, operators: filteredOperators };
+        }
+      }
+
+      return null;
+    }
+
+    // all jobs
+    return job;
+  })
+  .filter(Boolean);
+
   return (
     <div className={styles.pageContainer}>
       <Typography variant="h1">Job Listings</Typography>
@@ -60,7 +147,19 @@ export default function Page() {
 
       {!loading && !errorMessage && jobs.length > 0 && (
         <>
-          {jobs.map((job) => {
+          <Autocomplete
+            className={styles.searchBar}
+            options={searchOptions}
+            inputValue={inputValue}
+            getOptionLabel={(option) => option.label}
+            onChange={(e, value) => setSearchValue(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Search by Operator / Op / ID" />
+            )}
+            onInputChange={fetchAutoCompleteOptions}
+          />
+
+          {filteredJobs.map((job) => {
             const columnDefs = [
               { headerName: OPERATOR_COLUMNS.NAME, field: 'fullName', flex: 1 },
               { headerName: OPERATOR_COLUMNS.OPS_COMPLETED, field: 'opsCompleted', flex: 1 },
