@@ -14,6 +14,8 @@ This challenge assesses your proficiency in **React** and **Next.js**, including
 ### **What This Repo Contains**
 1. Loading
 2. Error Message: api error or no response error
-3. Render data via AgGridTable
+3. Render job data via AgGridTable, supports sorting
 4. MUI component for Autocomplete, Topology, Paper, Stack, CircularProgress...
+5. Search Options based on user typing or selected option
+6. Checkin/Checkout interact with local storage
 
