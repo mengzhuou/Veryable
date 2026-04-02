@@ -24,4 +24,15 @@ This challenge assesses your proficiency in **React** and **Next.js**, including
 2. npm i
 3. npm run dev
 
+<img width="1507" height="758" alt="image" src="https://github.com/user-attachments/assets/3d4bc509-5112-4184-b68b-6cb6c26629c5" />
+
+<img width="1506" height="751" alt="image" src="https://github.com/user-attachments/assets/d29e12ff-7c38-42b9-9076-50ffa9d5b49d" />
+
+<img width="1507" height="721" alt="image" src="https://github.com/user-attachments/assets/65428d1c-6547-4421-81a1-365b020d3b01" />
+
+
+
+
+
+
 
