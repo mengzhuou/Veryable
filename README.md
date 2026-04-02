@@ -19,3 +19,9 @@ This challenge assesses your proficiency in **React** and **Next.js**, including
 5. Search Options based on user typing or selected option
 6. Checkin/Checkout interact with local storage
 
+### **To Run the Project**
+1. Go to root folder "Veryable" where it has package.json
+2. npm i
+3. npm run dev
+
+
