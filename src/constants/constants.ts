@@ -14,3 +14,9 @@ export const JOB_LABELS = {
   START_TIME: 'Start Time',
   END_TIME: 'End Time',
 };
+
+export const CHECK_STATUS = {
+  CHECK_IN: 'Check In',
+  CHECK_OUT: 'Check Out',
+};
+

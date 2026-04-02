@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { getAllJobs, Job, Operator } from '../utils/connector';
 import { Typography, Paper, Stack, Divider, CircularProgress, Autocomplete, TextField } from '@mui/material';
 import { formatDateTime } from '../utils/pageUtils';
-import { OPERATOR_COLUMNS, JOB_LABELS } from '../constants/constants';
+import { OPERATOR_COLUMNS, JOB_LABELS, CHECK_STATUS } from '../constants/constants';
 import AgGridTable from '../components/Functions/AgGridTable/AgGridTable';
 import styles from './page.module.scss';
 
@@ -19,27 +19,27 @@ export default function Page() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const searchOptions = jobs.flatMap((job) => {
-    const operatorOptions = job.operators.map((op) => ({
+    const operatorOptions = job?.operators.map((op) => ({
       type: 'operator',
       label: `${op.firstName} ${op.lastName}`,
-      jobId: job.opId,
+      jobId: job?.opId,
     }));
 
     return [
       {
         type: 'job',
-        label: job.opTitle,
-        jobId: job.opId,
+        label: job?.opTitle,
+        jobId: job?.opId,
       },
       {
         type: 'publicId',
-        label: job.publicId,
-        jobId: job.opId,
+        label: job?.publicId,
+        jobId: job?.opId,
       },
       ...operatorOptions,
     ];
   });
-  
+
   useEffect(() => {
     const stored = localStorage.getItem('checkInStatus');
     // if (stored) setCheckInStatus(JSON.parse(stored));
@@ -81,14 +81,14 @@ export default function Page() {
 
       // match job title or publicId → return full job
       if (
-        job.opTitle.toLowerCase().includes(search) ||
-        job.publicId.toLowerCase().includes(search)
+        job?.opTitle.toLowerCase().includes(search) ||
+        job?.publicId.toLowerCase().includes(search)
       ) {
         return job;
       }
 
       // match operators → filter inside job
-      const filteredOperators = job.operators.filter((op) =>
+      const filteredOperators = job?.operators.filter((op) =>
         `${op.firstName} ${op.lastName}`
           .toLowerCase()
           .includes(search)
@@ -107,11 +107,11 @@ export default function Page() {
         searchValue.type === 'job' ||
         searchValue.type === 'publicId'
       ) {
-        return job.opId === searchValue.jobId ? job : null;
+        return job?.opId === searchValue.jobId ? job : null;
       }
 
       if (searchValue.type === 'operator') {
-        const filteredOperators = job.operators.filter(
+        const filteredOperators = job?.operators.filter(
           (op) =>
             `${op.firstName} ${op.lastName}` === searchValue.label
         );
@@ -129,6 +129,7 @@ export default function Page() {
   })
   .filter(Boolean);
 
+  
   return (
     <div className={styles.pageContainer}>
       <Typography variant="h1">Job Listings</Typography>
@@ -177,36 +178,44 @@ export default function Page() {
                       className={`${styles.checkInButton} ${checkedIn ? 'checkedIn' : 'checkedOut'}`}
                       onClick={() => handleCheckInOut(id)}
                     >
-                      {checkedIn ? 'Check Out' : 'Check In'}
+                      {checkedIn ? CHECK_STATUS.CHECK_OUT : CHECK_STATUS.CHECK_IN}
                     </button>
                   );
                 },
               },
             ];
 
-            const rowData = job.operators.map((op: Operator) => ({
+            const rowData = job?.operators.map((op: Operator) => ({
               id: op.id,
               fullName: `${op.firstName} ${op.lastName}`,
               opsCompleted: op.opsCompleted,
-              reliability: (op.reliability * 100).toFixed(0),
+              reliability: op.reliability * 100,
               endorsements: op.endorsements.join(', '),
             }));
 
             return (
-              <Paper key={job.opId} sx={{ p: 2, mb: 2 }} className={styles.jobContainer}>
+              <Paper
+                key={job?.opId}
+                sx={{
+                  p: 2,
+                  mb: 2,
+                  backgroundColor: 'transparent',
+                }}
+                className={styles.jobContainer}
+              >
                 <Stack spacing={2}>
-                  <Typography variant="h3">{job.opTitle}</Typography>
+                  <Typography variant="h3">{job?.opTitle}</Typography>
                   <Typography variant="body2">
-                    <strong>{JOB_LABELS.PUBLIC_ID}:</strong> {job.publicId}
+                    <strong>{JOB_LABELS.PUBLIC_ID}:</strong> {job?.publicId}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>{JOB_LABELS.OPERATORS_NEEDED}:</strong> {job.operatorsNeeded}
+                    <strong>{JOB_LABELS.OPERATORS_NEEDED}:</strong> {job?.operatorsNeeded}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>{JOB_LABELS.START_TIME}:</strong> {formatDateTime(job.startTime)}
+                    <strong>{JOB_LABELS.START_TIME}:</strong> {formatDateTime(job?.startTime ?? '')}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>{JOB_LABELS.END_TIME}:</strong> {formatDateTime(job.endTime)}
+                    <strong>{JOB_LABELS.END_TIME}:</strong> {formatDateTime(job?.endTime ?? '')}
                   </Typography>
                   <Divider />
                 </Stack>
